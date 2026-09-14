@@ -1,6 +1,6 @@
 const motorcycles = {
 
-  "Wave 110": [
+  "Wave 110i": [
     {
       code: "AFS110KDBT TH",
       name: "KDBT",
@@ -113,7 +113,7 @@ const motorcycles = {
       code: "ACF110BTT 2TH",
       name: "2TH",
       type: "ซี่ลวด",
-      colors: ["เทา-ขาว", "ชมพู-ขาว"],
+      colors: ["ดำ", "ฟ้า"],
       cash: 46000,
       promo: 49500,
       rateGroup: "S"
@@ -131,7 +131,7 @@ const motorcycles = {
       code: "ACF110CBTT TH",
       name: "Club12",
       type: "Club12",
-      colors: ["ขาว-เทา", "ดำ-แดง", "ขาว-น้ำเงิน"],
+      colors: ["ขาว-เทา", "ชมพู","ดำ-แดง", "ขาว-น้ำเงิน"],
       cash: 50000,
       promo: 54500,
       rateGroup: "S"
@@ -166,7 +166,7 @@ const motorcycles = {
       type: "CBS",
       colors: ["เทา-ดำ", "น้ำเงิน-ดำ", "เขียว-ดำ"],
       cash: null,
-      promo: null,
+      promo: 80200,
       rateGroup: "S"
     },
     {
@@ -175,20 +175,20 @@ const motorcycles = {
       type: "ABS",
       colors: ["เทา-น้ำตาล", "เหลือง-น้ำตาล", "ดำ-น้ำตาล", "ขาว-น้ำตาล"],
       cash: null,
-      promo: null,
+      promo: 86400,
       rateGroup: "S"
     }
   ],
 
-  "Click 160": [
+  "Click 125": [
     {
-      code: "ACB160CATV TH",
+      code: "ACB125CBT TH",
       name: "ABS",
       type: "ล้อแม็ก",
       colors: ["เหลือง-ดำ", "ขาว-ดำ", "ดำ", "เขียว-ดำ"],
-      cash: 75000,
-      promo: 78500,
-      rateGroup: "M"
+      cash: 59500,
+      promo: null,
+      rateGroup: "S"
     }
   ],
 
