@@ -1,200 +1,441 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Honda Sales Assistant</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Honda Sales Assistant</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
 
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f3f4f6;
-      color: #222;
-    }
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
 
-    .container {
-      max-width: 600px;
-      margin: auto;
-      padding: 16px;
-    }
+h1 {
+  margin-top: 0;
+  text-align: center;
+}
 
-    .header {
-      background: #d60000;
-      color: white;
-      padding: 20px;
-      border-radius: 18px;
-      text-align: center;
-      margin-bottom: 16px;
-    }
+h2 {
+  font-size: 18px;
+  margin-top: 25px;
+}
 
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
 
-    .header p {
-      margin: 6px 0 0;
-      font-size: 14px;
-    }
+button {
+  border: 1px solid #ddd;
+  background: white;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-    .card {
-      background: white;
-      border-radius: 16px;
-      padding: 18px;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
+button.selected {
+  background: #111;
+  color: white;
+}
 
-    .title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 12px;
-    }
+select, input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
 
-    .options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .option {
-      border: 2px solid #ddd;
-      border-radius: 12px;
-      padding: 14px 10px;
-      text-align: center;
-      background: white;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .option:active {
-      transform: scale(0.98);
-    }
-
-    .option.selected {
-      border-color: #d60000;
-      background: #fff1f1;
-      color: #d60000;
-      font-weight: bold;
-    }
-
-    .disabled {
-      color: #aaa;
-      background: #f5f5f5;
-      border-color: #eee;
-    }
-
-    .result {
-      background: #111;
-      color: white;
-    }
-
-    .result .title {
-      color: white;
-    }
-
-    .monthly {
-      font-size: 30px;
-      font-weight: bold;
-      color: white;
-      text-align: center;
-      margin-top: 12px;
-    }
-
-    .calculate {
-      width: 100%;
-      padding: 16px;
-      border: 0;
-      border-radius: 12px;
-      background: #d60000;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-    }
-  </style>
+#result {
+  margin-top: 25px;
+  padding: 15px;
+  background: #f1f1f1;
+  border-radius: 12px;
+  display: none;
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <div class="header">
-    <h1>HONDA SALES ASSISTANT</h1>
-    <p>ผู้ช่วยคำนวณสำหรับเซลล์</p>
-  </div>
+<h1>Honda Sales Assistant</h1>
 
-  <div class="card">
-    <div class="title">1. เลือกรถ</div>
+<h2>1. เลือกรถ</h2>
 
-    <div class="options">
-      <div class="option">Wave110</div>
-      <div class="option">Wave125i</div>
-      <div class="option">Super Cub</div>
-      <div class="option">Scoopy</div>
-      <div class="option">Lead125</div>
-      <div class="option">Giorno+</div>
-      <div class="option">Click125</div>
-      <div class="option">Click160</div>
-      <div class="option">PCX160</div>
-      <div class="option">ADV160</div>
-      <div class="option">Forza350</div>
-      <div class="option">CRF300L</div>
-      <div class="option">ADV350</div>
-      <div class="option">UC3</div>
-    </div>
-  </div>
+<div class="grid">
+  <button onclick="selectCar('Wave110', this)">Wave 110</button>
+  <button onclick="selectCar('Wave125i', this)">Wave 125i</button>
+  <button onclick="selectCar('Scoopy', this)">Scoopy</button>
+  <button onclick="selectCar('Lead125', this)">Lead 125</button>
+  <button onclick="selectCar('Giorno+', this)">Giorno+</button>
+  <button onclick="selectCar('Click160', this)">Click 160</button>
+  <button onclick="selectCar('ADV160', this)">ADV 160</button>
+  <button onclick="selectCar('PCX160', this)">PCX 160</button>
+</div>
 
-  <div class="card">
-    <div class="title">2. รุ่นย่อย</div>
+<h2>2. รุ่นย่อย</h2>
 
-    <div class="options">
-      <div class="option disabled">เลือกรถก่อน</div>
-    </div>
-  </div>
+<select id="submodel" onchange="selectSubmodel()">
+  <option value="">เลือกรถก่อน</option>
+</select>
 
-  <div class="card">
-    <div class="title">3. เงินดาวน์</div>
+<h2>3. สี</h2>
 
-    <div class="options">
-      <div class="option">5,000</div>
-      <div class="option">10,000</div>
-      <div class="option">20,000</div>
-      <div class="option">30,000</div>
-    </div>
-  </div>
+<select id="color">
+  <option value="">เลือกรุ่นย่อยก่อน</option>
+</select>
 
-  <div class="card">
-    <div class="title">4. จำนวนงวด</div>
+<h2>4. เงินดาวน์</h2>
 
-    <div class="options">
-      <div class="option">12 งวด</div>
-      <div class="option">18 งวด</div>
-      <div class="option">24 งวด</div>
-      <div class="option">30 งวด</div>
-      <div class="option">36 งวด</div>
-    </div>
-  </div>
+<div class="grid">
+  <button onclick="setDown(5000, this)">5,000</button>
+  <button onclick="setDown(10000, this)">10,000</button>
+  <button onclick="setDown(20000, this)">20,000</button>
+  <button onclick="setDown(30000, this)">30,000</button>
+</div>
 
-  <button class="calculate">
-    คำนวณ
-  </button>
+<br>
 
-  <div class="card result" style="margin-top:16px;">
-    <div class="title">ผลการคำนวณ</div>
+<input type="number" id="customDown" placeholder="หรือกรอกเงินดาวน์เอง">
 
-    <div>ยังไม่ได้เลือกรถ</div>
+<h2>5. จำนวนงวด</h2>
 
-    <div class="monthly">
-      — บาท/เดือน
-    </div>
-  </div>
+<div class="grid">
+  <button onclick="setMonths(12, this)">12 งวด</button>
+  <button onclick="setMonths(18, this)">18 งวด</button>
+  <button onclick="setMonths(24, this)">24 งวด</button>
+  <button onclick="setMonths(30, this)">30 งวด</button>
+  <button onclick="setMonths(36, this)">36 งวด</button>
+</div>
+
+<br>
+
+<button onclick="calculate()" style="width:100%; background:#111; color:white;">
+คำนวณค่างวด
+</button>
+
+<div id="result"></div>
 
 </div>
+
+<script>
+
+const carData = {
+
+  "Wave110": [
+    {
+      name: "KDBT TH",
+      colors: ["ดำ"],
+      promo: 45000
+    },
+    {
+      name: "MSBT TH",
+      colors: ["น้ำเงิน-ดำ", "ดำ-น้ำตาล"],
+      promo: 54200
+    },
+    {
+      name: "MSBT 2TH",
+      colors: ["เทา-ดำ"],
+      promo: 54200
+    },
+    {
+      name: "MCBT TH",
+      colors: ["น้ำเงิน", "แดง"],
+      promo: 56700
+    },
+    {
+      name: "MCBT 2TH",
+      colors: ["เทา-น้ำตาล"],
+      promo: 56700
+    },
+    {
+      name: "MCBT 3TH",
+      colors: ["ขาว-น้ำตาล", "ดำ-น้ำตาล"],
+      promo: 57200
+    }
+  ],
+
+  "Wave125i": [
+    {
+      name: "MSBT TH",
+      colors: ["แดง-ดำ", "ดำ"],
+      promo: 64800
+    },
+    {
+      name: "CSBT TH",
+      colors: ["น้ำตาล-ดำ", "น้ำเงิน-ดำ", "ดำ", "ขาว-ดำ"],
+      promo: 67500
+    },
+    {
+      name: "CSBT 2TH",
+      colors: ["น้ำตาล-ดำ", "น้ำเงิน-ดำ", "ดำ", "ขาว-ดำ"],
+      promo: 69200
+    }
+  ],
+
+  "Scoopy": [
+    {
+      name: "2TH",
+      colors: ["เทา-ขาว", "ชมพู-ขาว"],
+      promo: 49500
+    },
+    {
+      name: "3TH",
+      colors: ["เขียว", "ดำ", "ขาว"],
+      promo: 53000
+    },
+    {
+      name: "Club12",
+      colors: ["ขาว-เทา", "ดำ-แดง", "ขาว-น้ำเงิน"],
+      promo: 54500
+    }
+  ],
+
+  "Lead125": [
+    {
+      name: "CBS",
+      colors: ["ดำ", "ขาว-ดำ"],
+      promo: 63500
+    },
+    {
+      name: "ABS",
+      colors: ["ดำ", "เทา"],
+      promo: 68000
+    }
+  ],
+
+  "Giorno+": [
+    {
+      name: "CBS",
+      colors: ["เทา-ดำ", "น้ำเงิน-ดำ", "เขียว-ดำ"],
+      promo: null
+    },
+    {
+      name: "ABS",
+      colors: ["เทา-น้ำตาล", "เหลือง-น้ำตาล", "ดำ-น้ำตาล", "ขาว-น้ำตาล"],
+      promo: null
+    }
+  ],
+
+  "Click160": [
+    {
+      name: "ABS",
+      colors: ["เหลือง-ดำ", "ขาว-ดำ", "ดำ", "เขียว-ดำ"],
+      promo: 78500
+    }
+  ],
+
+  "ADV160": [
+    {
+      name: "3TH",
+      colors: ["น้ำตาล-ดำ", "เขียว-ดำ", "น้ำเงิน-ดำ"],
+      promo: 109000
+    },
+    {
+      name: "7TH",
+      colors: ["ยังไม่มีข้อมูลสี"],
+      promo: 109500
+    }
+  ],
+
+  "PCX160": [
+    {
+      name: "Standard",
+      colors: ["เขียว-ดำ", "น้ำเงิน-ดำ", "เทา-ดำ"],
+      promo: 108300
+    },
+    {
+      name: "RS",
+      colors: ["ยังไม่มีข้อมูลสี"],
+      promo: 113000
+    }
+  ]
+};
+
+let selectedCar = "";
+let selectedSubmodel = null;
+let selectedDown = 0;
+let selectedMonths = 36;
+
+function selectCar(car, button) {
+
+  selectedCar = car;
+
+  document.querySelectorAll(".grid button").forEach(btn => {
+    if (btn.parentElement === button.parentElement) {
+      btn.classList.remove("selected");
+    }
+  });
+
+  button.classList.add("selected");
+
+  const submodel = document.getElementById("submodel");
+
+  submodel.innerHTML = '<option value="">เลือกรุ่นย่อย</option>';
+
+  carData[car].forEach((item, index) => {
+    const option = document.createElement("option");
+
+    option.value = index;
+    option.textContent = item.name;
+
+    submodel.appendChild(option);
+  });
+
+  document.getElementById("color").innerHTML =
+    '<option value="">เลือกรุ่นย่อยก่อน</option>';
+
+  document.getElementById("result").style.display = "none";
+}
+
+function selectSubmodel() {
+
+  const index = document.getElementById("submodel").value;
+
+  if (index === "") return;
+
+  selectedSubmodel = carData[selectedCar][index];
+
+  const color = document.getElementById("color");
+
+  color.innerHTML = '<option value="">เลือกสี</option>';
+
+  selectedSubmodel.colors.forEach(item => {
+
+    const option = document.createElement("option");
+
+    option.value = item;
+    option.textContent = item;
+
+    color.appendChild(option);
+
+  });
+}
+
+function setDown(amount, button) {
+
+  selectedDown = amount;
+
+  document.querySelectorAll(".grid button").forEach(btn => {
+    if (btn.parentElement === button.parentElement) {
+      btn.classList.remove("selected");
+    }
+  });
+
+  button.classList.add("selected");
+
+  document.getElementById("customDown").value = "";
+}
+
+function setMonths(months, button) {
+
+  selectedMonths = months;
+
+  document.querySelectorAll(".grid button").forEach(btn => {
+    if (btn.parentElement === button.parentElement) {
+      btn.classList.remove("selected");
+    }
+  });
+
+  button.classList.add("selected");
+}
+
+function calculate() {
+
+  const customDown =
+    Number(document.getElementById("customDown").value);
+
+  if (customDown > 0) {
+    selectedDown = customDown;
+  }
+
+  if (!selectedCar) {
+    alert("กรุณาเลือกรถ");
+    return;
+  }
+
+  if (!selectedSubmodel) {
+    alert("กรุณาเลือกรุ่นย่อย");
+    return;
+  }
+
+  if (!selectedSubmodel.promo) {
+    alert("รุ่นนี้ยังไม่มีราคาโปรในฐานข้อมูล");
+    return;
+  }
+
+  const principal =
+    selectedSubmodel.promo - selectedDown;
+
+  let rate = 0;
+
+  if (
+    selectedCar === "Click160" ||
+    selectedCar === "ADV160" ||
+    selectedCar === "PCX160"
+  ) {
+    rate = 0.0099;
+  } else {
+    if (selectedMonths === 36) rate = 0.0109;
+    else if (selectedMonths === 30) rate = 0.0107;
+    else rate = 0.0106;
+  }
+
+  const interest =
+    principal * rate * selectedMonths;
+
+  const total =
+    principal + interest;
+
+  const payment =
+    total / selectedMonths;
+
+  document.getElementById("result").style.display = "block";
+
+  document.getElementById("result").innerHTML = `
+    <h2>ผลคำนวณ</h2>
+
+    <b>${selectedCar}</b><br>
+    รุ่นย่อย: ${selectedSubmodel.name}<br>
+    สี: ${document.getElementById("color").value || "-"}<br><br>
+
+    ราคาโปร: ${selectedSubmodel.promo.toLocaleString()} บาท<br>
+    เงินดาวน์: ${selectedDown.toLocaleString()} บาท<br>
+    ยอดจัด: ${principal.toLocaleString(undefined, {
+      maximumFractionDigits: 0
+    })} บาท<br>
+    อัตรา: ${(rate * 100).toFixed(2)}% / เดือน<br>
+    จำนวนงวด: ${selectedMonths} งวด<br>
+
+    <hr>
+
+    <strong>
+      ประมาณ ${payment.toLocaleString(undefined, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      })} บาท/เดือน
+    </strong>
+  `;
+}
+
+</script>
 
 </body>
 </html>
