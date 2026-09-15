@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบคำนวณค่างวดรถจักรยานยนต์</title>
+    <!-- ใช้ Tailwind CSS สำหรับจัดหน้าตาให้สวยงามใช้งานง่าย -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-6">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">ระบบคำนวณค่างวดรถจักรยานยนต์</h1>
+
+        <!-- 1. เลือกรถ -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">เลือกรุ่นรถ</label>
+                <select id="carSelect" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white focus:ring-2 focus:ring-blue-500">
+                    <option value="">-- กรุณาเลือกรถ --</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">รุ่นย่อย / ความพิเศษ</label>
+                <input type="text" id="carSub" readonly class="w-full border border-gray-200 rounded-lg p-2.5 bg-gray-50 text-gray-600" placeholder="แสดงรุ่นย่อยอัตโนมัติ">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อสี</label>
+                <input type="text" id="carColor" readonly class="w-full border border-gray-200 rounded-lg p-2.5 bg-gray-50 text-gray-600" placeholder="แสดงสีอัตโนมัติ">
+            </div>
+        </div>
+
+        <!-- 2. แสดงราคา -->
+        <div class="bg-blue-50 rounded-lg p-4 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div>
+                <span class="block text-xs text-gray-500">ราคาเงินสด</span>
+                <span id="txtCashPrice" class="text-lg font-bold text-blue-600">-</span>
+            </div>
+            <div>
+                <span class="block text-xs text-gray-500">ยอดจัดเต็ม</span>
+                <span id="txtFullFinance" class="text-lg font-bold text-gray-700">-</span>
+            </div>
+            <div>
+                <span class="block text-xs text-gray-500">ช่วยดาวน์</span>
+                <span id="txtHelpDown" class="text-lg font-bold text-green-600">-</span>
+            </div>
+            <div>
+                <span class="block text-xs text-gray-500">โปรจัดใหม่</span>
+                <span id="txtNewFinance" class="text-lg font-bold text-indigo-600">-</span>
+            </div>
+        </div>
+
+        <!-- 3. เลือกกลุ่มดาวน์ -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">กลุ่มดาวน์ขั้นต่ำ</label>
+            <div class="grid grid-cols-2 gap-4">
+                <button type="button" onclick="selectDownGroup(10)" id="btnGroup10" class="border border-blue-300 rounded-lg p-3 text-left hover:bg-blue-50 transition">
+                    <div class="font-bold text-blue-800">กลุ่ม 10%</div>
+                    <div class="text-xs text-gray-600">ดาวน์ขั้นต่ำ: <span id="minDown10">0</span> บาท</div>
+                </button>
+                <button type="button" onclick="selectDownGroup(20)" id="btnGroup20" class="border border-blue-300 rounded-lg p-3 text-left hover:bg-blue-50 transition">
+                    <div class="font-bold text-blue-800">กลุ่ม 20%</div>
+                    <div class="text-xs text-gray-600">ดาวน์ขั้นต่ำ: <span id="minDown20">0</span> บาท</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- 4. เลือก/กรอกเงินดาวน์ -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">เลือกหรือกรอกเงินดาวน์</label>
+            <div class="flex flex-wrap gap-2 mb-2">
+                <button type="button" onclick="setDownAmount(5000)" class="px-3 py-1.5 border rounded-lg text-sm hover:bg-gray-100">5,000</button>
+                <button type="button" onclick="setDownAmount(10000)" class="px-3 py-1.5 border rounded-lg text-sm hover:bg-gray-100">10,000</button>
+                <button type="button" onclick="setDownAmount(20000)" class="px-3 py-1.5 border rounded-lg text-sm hover:bg-gray-100">20,000</button>
+                <button type="button" onclick="setDownAmount(30000)" class="px-3 py-1.5 border rounded-lg text-sm hover:bg-gray-100">30,000</button>
+            </div>
+            <input type="number" id="inputDown" oninput="checkDownValidation()" placeholder="กรอกจำนวนเงินดาวน์เอง" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500">
+            <p id="warningMsg" class="text-xs text-red-500 mt-1 hidden">⚠️ เงินดาวน์ต่ำกว่าเกณฑ์ขั้นต่ำที่กำหนด</p>
+        </div>
+
+        <!-- 5. เลือกระยะผ่อน -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">ระยะเวลาผ่อน (งวด)</label>
+            <div class="flex gap-2">
+                <button type="button" onclick="setMonth(12)" class="month-btn flex-1 py-2 border rounded-lg text-sm font-medium hover:bg-gray-100" data-month="12">12</button>
+                <button type="button" onclick="setMonth(18)" class="month-btn flex-1 py-2 border rounded-lg text-sm font-medium hover:bg-gray-100" data-month="18">18</button>
+                <button type="button" onclick="setMonth(24)" class="month-btn flex-1 py-2 border rounded-lg text-sm font-medium hover:bg-gray-100" data-month="24">24</button>
+                <button type="button" onclick="setMonth(30)" class="month-btn flex-1 py-2 border rounded-lg text-sm font-medium hover:bg-gray-100" data-month="30">30</button>
+                <button type="button" onclick="setMonth(36)" class="month-btn flex-1 py-2 border rounded-lg text-sm font-medium hover:bg-gray-100" data-month="36">36</button>
+            </div>
+        </div>
+
+        <!-- ปุ่มคำนวณ -->
+        <div class="flex gap-4 mb-6">
+            <button type="button" onclick="calculate()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition shadow">คำนวณ</button>
+            <button type="button" onclick="compareAll()" class="flex-1 bg-gray-800 text-white font-bold py-3 rounded-lg hover:bg-gray-900 transition shadow">เปรียบเทียบทุกงวด</button>
+        </div>
+
+        <!-- 6. แสดงผลลัพธ์ -->
+        <div id="resultSection" class="bg-gray-50 rounded-xl p-5 border border-gray-200 hidden">
+            <h2 class="text-lg font-bold text-gray-800 mb-3 border-b pb-2">ผลการคำนวณ</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm mb-4">
+                <div class="flex justify-between"><span>ราคาเงินสด:</span> <strong id="resCash">-</strong></div>
+                <div class="flex justify-between"><span>โปรจัดใหม่:</span> <strong id="resNewFinance">-</strong></div>
+                <div class="flex justify-between"><span>เงินดาวน์:</span> <strong id="resDown">-</strong></div>
+                <div class="flex justify-between"><span>ยอดจัด (Finance):</span> <strong id="resFinance">-</strong></div>
+                <div class="flex justify-between"><span>ดอกเบี้ย (โดยประมาณ):</span> <strong id="resInterest">-</strong></div>
+                <div class="flex justify-between"><span>ยอดชำระรวม:</span> <strong id="resTotal">-</strong></div>
+            </div>
+            <div class="bg-blue-600 text-white p-4 rounded-lg text-center">
+                <span class="text-sm opacity-90">ค่างวด (<span id="resSelectedMonth">36</span> งวด)</span>
+                <div class="text-3xl font-bold mt-1" id="resMonthly">-</div>
+            </div>
+        </div>
+
+        <!-- ตารางเปรียบเทียบทุกงวด -->
+        <div id="compareSection" class="bg-gray-50 rounded-xl p-5 border border-gray-200 mt-4 hidden">
+            <h2 class="text-lg font-bold text-gray-800 mb-3 border-b pb-2">ตารางเปรียบเทียบค่างวดทุกระยะเวลา</h2>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b text-gray-600 text-sm">
+                        <th class="py-2">งวด (เดือน)</th>
+                        <th class="py-2 text-right">ค่างวด / เดือน</th>
+                    </tr>
+                </thead>
+                <tbody id="compareTableBody" class="text-sm text-gray-800">
+                    <!-- ข้อมูลรันผ่าน JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // ฐานข้อมูลรถที่คุณให้มา
+        const carData = [
+            { id: 1, code: "AFS110KDBT TH", name: "Honda Wave110", sub: "ล้อซี่ลวด / สตาร์ทเท้า / ดรัมเบรก", color: "ดำ (BLK)", cash: 39500, fullFin: 50000, helpDown: 5000, newFin: 45000, d10: 44100, down10: 900, d20: 39200, down20: 5800 },
+            { id: 2, code: "AFS110MSBT TH", name: "Honda Wave110", sub: "ล้อซี่ลวด / สตาร์ทมือ", color: "น้ำเงิน-ดำ, ดำ-น้ำตาล", cash: 39500, fullFin: 59200, helpDown: 5000, newFin: 54200, d10: 52300, down10: 1900, d20: 46500, down20: 7700 },
+            { id: 3, code: "AFS110MSBT 2TH", name: "Honda Wave110", sub: "ล้อซี่ลวด / สีพิเศษ", color: "เทา-ดำ", cash: 39500, fullFin: 59200, helpDown: 5000, newFin: 54200, d10: 52300, down10: 1900, d20: 46500, down20: 7700 },
+            { id: 4, code: "AFS110MCBT TH", name: "Honda Wave110", sub: "ล้อแม็ก / สตาร์ทมือ", color: "น้ำเงิน, แดง", cash: 48000, fullFin: 61700, helpDown: 5000, newFin: 56700, d10: 54600, down20: 2100, d20: 48500, down20: 8200 },
+            { id: 5, code: "AFS110MCBT 2TH", name: "Honda Wave110", sub: "ล้อแม็ก / สีพิเศษ", color: "เทา-น้ำตาล", cash: 48000, fullFin: 61700, helpDown: 5000, newFin: 56700, d10: 54600, down10: 2100, d20: 48500, down20: 8200 },
+            { id: 6, code: "AFS110MCBT 3TH", name: "Honda Wave110", sub: "ล้อแม็ก / สีพิเศษ", color: "ขาว-น้ำตาล, ดำ-น้ำตาล", cash: 48000, fullFin: 62200, helpDown: 5000, newFin: 57200, d10: 55000, down10: 2200, d20: 48900, down20: 8300 },
+            { id: 7, code: "AFS125MSBT TH", name: "Honda Wave125i", sub: "ล้อซี่ลวด / สตาร์ทมือ", color: "แดง-ดำ, ดำ", cash: 60000, fullFin: 69800, helpDown: 5000, newFin: 64800, d10: 61900, down10: 2900, d20: 55100, down20: 9700 },
+            { id: 8, code: "AFS125CSBT TH", name: "Honda Wave125i", sub: "ล้อแม็กดำ / สตาร์ทมือ", color: "น้ำตาล-ดำ, น้ำเงิน-ดำ, ดำ, ขาว-ดำ", cash: 62000, fullFin: 72500, helpDown: 5000, newFin: 67500, d10: 64300, down10: 3200, d20: 57200, down20: 10300 },
+            { id: 9, code: "AFS125CSBT 2TH", name: "Honda Wave125i", sub: "ล้อแม็กทอง / สีพิเศษ", color: "น้ำตาล-ดำ, น้ำเงิน-ดำ, ดำ, ขาว-ดำ", cash: 65000, fullFin: 74200, helpDown: 5000, newFin: 69200, d10: 65800, down10: 3400, d20: 58500, down20: 10700 },
+            { id: 10, code: "NBC110MSBT TH", name: "Honda Super Cub", sub: "สีเขียว / รุ่นมาตรฐาน", color: "สีเขียว", cash: 52000, fullFin: 59500, helpDown: 2000, newFin: 57500, d10: 51500, down10: 6000, d20: 46000, down20: 11500 },
+            { id: 11, code: "NBC110MSBT 2TH", name: "Honda Super Cub", sub: "รุ่น 2TH / สีแฟชั่น", color: "Tokyo 80s Limited Edition", cash: 52000, fullFin: 63700, helpDown: 2000, newFin: 63700, d10: 57300, down10: 6400, d20: 50900, down20: 12800 },
+            // สามารถเพิ่มข้อมูลแถวที่เหลือต่อได้ในลักษณะเดียวกัน
+        ];
+
+        let selectedCar = null;
+        let selectedMonthVal = 36;
+        let currentMinDown = 0;
+
+        // เติมข้อมูลลง Dropdown
+        const carSelect = document.getElementById('carSelect');
+        carData.forEach(car => {
+            let opt = document.createElement('option');
+            opt.value = car.id;
+            opt.textContent = `${car.name} (${car.sub}) - สี ${car.color}`;
+            carSelect.appendChild(opt);
+        });
+
+        carSelect.addEventListener('change', function() {
+            const id = this.value;
+            selectedCar = carData.find(c => c.id == id);
+            if (selectedCar) {
+                document.getElementById('carSub').value = selectedCar.sub;
+                document.getElementById('carColor').value = selectedCar.color;
+                document.getElementById('txtCashPrice').textContent = selectedCar.cash.toLocaleString() + ' บ.';
+                document.getElementById('txtFullFinance').textContent = selectedCar.fullFin.toLocaleString() + ' บ.';
+                document.getElementById('txtHelpDown').textContent = selectedCar.helpDown.toLocaleString() + ' บ.';
+                document.getElementById('txtNewFinance').textContent = selectedCar.newFin.toLocaleString() + ' บ.';
+                
+                document.getElementById('minDown10').textContent = selectedCar.down10.toLocaleString();
+                document.getElementById('minDown20').textContent = selectedCar.down20.toLocaleString();
+            }
+        });
+
+        function selectDownGroup(percent) {
+            if (!selectedCar) return;
+            if (percent === 10) {
+                currentMinDown = selectedCar.down10;
+                document.getElementById('inputDown').value = currentMinDown;
+                document.getElementById('btnGroup10').classList.add('bg-blue-50', 'border-blue-600');
+                document.getElementById('btnGroup20').classList.remove('bg-blue-50', 'border-blue-600');
+            } else {
+                currentMinDown = selectedCar.down20;
+                document.getElementById('inputDown').value = currentMinDown;
+                document.getElementById('btnGroup20').classList.add('bg-blue-50', 'border-blue-600');
+                document.getElementById('btnGroup10').classList.remove('bg-blue-50', 'border-blue-600');
+            }
+            checkDownValidation();
+        }
+
+        function setDownAmount(amount) {
+            document.getElementById('inputDown').value = amount;
+            checkDownValidation();
+        }
+
+        function checkDownValidation() {
+            const userDown = parseFloat(document.getElementById('inputDown').value) || 0;
+            const warning = document.getElementById('warningMsg');
+            if (currentMinDown > 0 && userDown < currentMinDown) {
+                warning.classList.remove('hidden');
+            } else {
+                warning.classList.add('hidden');
+            }
+        }
+
+        function setMonth(m) {
+            selectedMonthVal = m;
+            document.querySelectorAll('.month-btn').forEach(btn => {
+                if(btn.dataset.month == m) {
+                    btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+                } else {
+                    btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                }
+            });
+        }
+        // กำหนดค่าเริ่มต้นงวด 36
+        setMonth(36);
+
+        function calculate() {
+            if (!selectedCar) {
+                alert('กรุณาเลือกรถก่อนคำนวณ');
+                return;
+            }
+            const down = parseFloat(document.getElementById('inputDown').value) || 0;
+            const basePrice = selectedCar.newFin > 0 ? selectedCar.newFin : selectedCar.fullFin;
+            const financeAmount = basePrice - down;
+            
+            // สูตรคำนวณดอกเบี้ยสมมติ (เช่น 1.5% ต่อเดือน หรือตามเรทไฟแนนซ์)
+            const interestRatePerMonth = 0.015; 
+            const totalInterest = financeAmount * interestRatePerMonth * selectedMonthVal;
+            const totalPayment = financeAmount + totalInterest;
+            const monthlyPayment = totalPayment / selectedMonthVal;
+
+            // แสดงผล
+            document.getElementById('resCash').textContent = selectedCar.cash.toLocaleString() + ' บาท';
+            document.getElementById('resNewFinance').textContent = (selectedCar.newFin || selectedCar.fullFin).toLocaleString() + ' บาท';
+            document.getElementById('resDown').textContent = down.toLocaleString() + ' บาท';
+            document.getElementById('resFinance').textContent = financeAmount.toLocaleString() + ' บาท';
+            document.getElementById('resInterest').textContent = Math.round(totalInterest).toLocaleString() + ' บาท';
+            document.getElementById('resTotal').textContent = Math.round(totalPayment).toLocaleString() + ' บาท';
+            document.getElementById('resSelectedMonth').textContent = selectedMonthVal;
+            document.getElementById('resMonthly').textContent = Math.round(monthlyPayment).toLocaleString() + ' บาท / เดือน';
+
+            document.getElementById('resultSection').classList.remove('hidden');
+        }
+
+        function compareAll() {
+            if (!selectedCar) {
+                alert('กรุณาเลือกรถก่อนเปรียบเทียบ');
+                return;
+            }
+            const down = parseFloat(document.getElementById('inputDown').value) || 0;
+            const basePrice = selectedCar.newFin > 0 ? selectedCar.newFin : selectedCar.fullFin;
+            const financeAmount = basePrice - down;
+            
+            const months = [12, 18, 24, 30, 36];
+            let tbody = document.getElementById('compareTableBody');
+            tbody.innerHTML = '';
+
+            months.forEach(m => {
+                const interestRatePerMonth = 0.015;
+                const totalInterest = financeAmount * interestRatePerMonth * m;
+                const monthlyPayment = (financeAmount + totalInterest) / m;
+
+                let row = `<tr class="border-b hover:bg-gray-100">
+                    <th class="py-2.5 font-medium">${m} งวด</th>
+                    <td class="py-2.5 text-right font-bold text-blue-600">${Math.round(monthlyPayment).toLocaleString()} บาท</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+
+            document.getElementById('compareSection').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
