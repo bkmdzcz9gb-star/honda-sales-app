@@ -1,382 +1,110 @@
+ต่อไฟล์ index.html ครับ
+
+เปิด index.html → ลบโค้ดเดิมทั้งหมด → วางโค้ดนี้แทน → Commit changes
+
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Honda Sales Assistant</title>
-
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
-
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Honda กาญจนบุรี - เครื่องคำนวณผ่อน</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
-
 <body>
-
-
-<div class="container">
-
-
-  <!-- HEADER -->
-
-  <div class="header">
-
-    <h1>Honda Sales Assistant</h1>
-
-    <p>
-      ผู้ช่วยคำนวณไฟแนนซ์สำหรับเซลล์
-    </p>
-
-  </div>
-
-
-
-  <!-- เลือกรถ -->
-
-  <div class="card">
-
-    <div class="section-title">
-      1. เลือกรถ
-    </div>
-
-
-    <div class="grid">
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('Wave 110i', this)"
-      >
-        Wave 110i
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('Wave 125i', this)"
-      >
-        Wave 125i
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('Super Cub', this)"
-      >
-        Super Cub
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('Scoopy', this)"
-      >
-        Scoopy
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('Lead 125', this)"
-      >
-        Lead 125
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('Giorno+', this)"
-      >
-        Giorno+
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('Click 125', this)"
-      >
-        Click 125
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('ADV 160', this)"
-      >
-        ADV 160
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('PCX 160', this)"
-      >
-        PCX 160
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('Forza 350', this)"
-      >
-        Forza 350
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('CRF300L', this)"
-      >
-        CRF300L
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('ADV 350', this)"
-      >
-        ADV 350
-      </button>
-
-
-      <button
-        class="option car-option"
-        onclick="selectCar('UC3', this)"
-      >
-        Honda UC3
-      </button>
-
-
-    </div>
-
-  </div>
-
-
-
-  <!-- รุ่นย่อย -->
-
-  <div class="card">
-
-    <div class="section-title">
-      2. รุ่นย่อย
-    </div>
-
-
-    <select
-      id="modelSelect"
-      onchange="selectModel()"
-    >
-
-      <option value="">
-        กรุณาเลือกรถก่อน
-      </option>
-
-    </select>
-
-  </div>
-
-
-
-  <!-- สี -->
-
-  <div class="card">
-
-    <div class="section-title">
-      3. สี
-    </div>
-
-
-    <select
-      id="colorSelect"
-      onchange="selectColor()"
-    >
-
-      <option value="">
-        กรุณาเลือกรุ่นย่อยก่อน
-      </option>
-
-    </select>
-
-  </div>
-
-
-
-  <!-- เงินดาวน์ -->
-
-  <div class="card">
-
-    <div class="section-title">
-      4. เงินดาวน์
-    </div>
-
-
-    <div class="grid">
-
-
-      <button
-        class="option down-option"
-        onclick="selectDown(5000, this)"
-      >
-        5,000
-      </button>
-
-
-      <button
-        class="option down-option"
-        onclick="selectDown(10000, this)"
-      >
-        10,000
-      </button>
-
-
-      <button
-        class="option down-option"
-        onclick="selectDown(20000, this)"
-      >
-        20,000
-      </button>
-
-
-      <button
-        class="option down-option"
-        onclick="selectDown(30000, this)"
-      >
-        30,000
-      </button>
-
-
-    </div>
-
-
-    <br>
-
-
-    <input
-      id="customDown"
-      type="number"
-      placeholder="หรือกรอกเงินดาวน์เอง"
-      oninput="customDownChanged()"
-    >
-
-  </div>
-
-
-
-  <!-- จำนวนงวด -->
-
-  <div class="card">
-
-    <div class="section-title">
-      5. จำนวนงวด
-    </div>
-
-
-    <div class="grid">
-
-
-      <button
-        class="option month-option"
-        onclick="selectMonths(12, this)"
-      >
-        12 งวด
-      </button>
-
-
-      <button
-        class="option month-option"
-        onclick="selectMonths(18, this)"
-      >
-        18 งวด
-      </button>
-
-
-      <button
-        class="option month-option"
-        onclick="selectMonths(24, this)"
-      >
-        24 งวด
-      </button>
-
-
-      <button
-        class="option month-option"
-        onclick="selectMonths(30, this)"
-      >
-        30 งวด
-      </button>
-
-
-      <button
-        class="option month-option selected"
-        onclick="selectMonths(36, this)"
-      >
-        36 งวด
-      </button>
-
-
-    </div>
-
-  </div>
-
-
-
-  <!-- คำนวณ -->
-
-  <div class="card">
-
-    <button
-      class="calculate"
-      onclick="calculate()"
-    >
-      คำนวณค่างวด
-    </button>
-
-
-    <button
-      class="reset"
-      onclick="resetForm()"
-    >
-      รีเซ็ต
-    </button>
-
-  </div>
-
-
-
-  <!-- ผลลัพธ์ -->
-
-  <div
-    id="result"
-    class="result"
-    style="display:none;"
-  >
-
-  </div>
-
-
+<div class="wrap">
+    <header>
+        <div class="brand">
+            HONDA KANCHANABURI
+        </div>
+        <h1>เครื่องคำนวณยอดผ่อน Honda</h1>
+        <p>
+            ฮอนด้ากาญจนบุรี • ตัวเมืองกาญจน์
+        </p>
+    </header>
+    <!-- เลือกรถ -->
+    <section class="card">
+        <h2>1. เลือกรถ</h2>
+        <select id="bike">
+            <option value="">
+                เลือกรุ่นรถ
+            </option>
+        </select>
+    </section>
+    <!-- ข้อมูลการผ่อน -->
+    <section class="card">
+        <h2>2. ข้อมูลการผ่อน</h2>
+        <label>
+            เงินดาวน์
+        </label>
+        <input
+            id="down"
+            type="number"
+            inputmode="numeric"
+            placeholder="เช่น 10000"
+        >
+        <label>
+            จำนวนงวด
+        </label>
+        <select id="months">
+            <option value="12">
+                12 งวด
+            </option>
+            <option value="18">
+                18 งวด
+            </option>
+            <option value="24">
+                24 งวด
+            </option>
+            <option value="30">
+                30 งวด
+            </option>
+            <option value="36" selected>
+                36 งวด
+            </option>
+        </select>
+        <button
+            onclick="calculate()"
+            class="main-btn"
+        >
+            คำนวณยอดผ่อน
+        </button>
+    </section>
+    <!-- ผลลัพธ์ -->
+    <section class="card">
+        <h2>3. ผลการคำนวณ</h2>
+        <div id="result">
+            <div class="empty">
+                เลือกรถ ใส่เงินดาวน์
+                แล้วกดคำนวณ
+            </div>
+        </div>
+    </section>
+    <!-- หมายเหตุ -->
+    <section class="card note">
+        <strong>หมายเหตุ</strong>
+        <p>
+            ยอดผ่อนเป็นการคำนวณเบื้องต้น
+            เงื่อนไขจริงขึ้นอยู่กับเกณฑ์ของไฟแนนซ์
+        </p>
+        <p>
+            อาจมีค่าใช้จ่ายอื่นเพิ่มเติม
+            เช่น ค่าจดทะเบียน พ.ร.บ.
+            ประกันภัย หรือค่าใช้จ่าย ณ วันรับรถ
+        </p>
+        <p>
+            ฮอนด้ากาญจนบุรี
+            โทร. 034-513-138
+        </p>
+    </section>
 </div>
-
-
-
-<!-- ฐานข้อมูลรถ -->
-
 <script src="motorcycles.js"></script>
-
-
-<!-- ระบบคำนวณ -->
-
 <script src="app.js"></script>
-
-
 </body>
-
 </html>
+
+หลังวางโค้ด
+
+กด Commit changes
+
+จากนั้นเหลือไฟล์สุดท้ายคือ style.css เพื่อทำหน้าตาเว็บให้เหมาะกับมือถือ/iPad และจัดปุ่มกับผลคำนวณให้ดูเป็นระบบครับ
