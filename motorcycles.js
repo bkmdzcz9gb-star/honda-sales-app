@@ -2,15 +2,6 @@ const motorcycles = {
 
   "Wave 110i": [
     {
-      code: "AFS110KDBT TH",
-      name: "KDBT",
-      type: "ซี่ลวด",
-      colors: ["ดำ"],
-      cash: 39500,
-      promo: 45000,
-      rateGroup: "S"
-    },
-    {
       code: "AFS110MSBT TH",
       name: "MSBT",
       type: "ซี่ลวด",
