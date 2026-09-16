@@ -1,105 +1,468 @@
-const bikeSelect = document.getElementById("bike");
-const downInput = document.getElementById("down");
-const monthSelect = document.getElementById("months");
-const resultBox = document.getElementById("result");
+let selectedCar = null;
+let selectedModel = null;
+let selectedColor = "";
+let selectedDown = 0;
+let selectedMonths = 36;
 
-MOTORCYCLES.forEach((bike, index) => {
-    const option = document.createElement("option");
-    option.value = index;
-    option.textContent =
-        `${bike.name} - ${bike.variant}`;
-    bikeSelect.appendChild(option);
-});
-
-function getRate(group, months) {
-
-    if(group === "S"){
-        if(months == 36) return 0.0109;
-        if(months == 30) return 0.0107;
-        return 0.0106;
-    }
-
-    if(group === "M"){
-        return 0.0099;
-    }
-
-    return 0;
+function formatMoney(number) {
+  return Number(number).toLocaleString("th-TH", {
+    maximumFractionDigits: 0
+  });
 }
 
-function calculate(){
 
-    const bike =
-        MOTORCYCLES[bikeSelect.value];
+/* =========================
+   เลือกรถ
+========================= */
 
-    if(!bike) return;
+function selectCar(carName, button) {
 
-    const down =
-        Number(downInput.value) || 0;
+  selectedCar = carName;
+  selectedModel = null;
+  selectedColor = "";
 
-    const months =
-        Number(monthSelect.value);
+  document
+    .querySelectorAll(".car-option")
+    .forEach(function(button) {
+      button.classList.remove("selected");
+    });
 
-    const promo =
-        bike.promo || bike.full;
+  button.classList.add("selected");
 
-    const finance =
-        promo - down;
+  const modelSelect =
+    document.getElementById("modelSelect");
 
-    let totalInterest = 0;
+  const colorSelect =
+    document.getElementById("colorSelect");
 
-    if(bike.rateGroup === "L"){
+  modelSelect.innerHTML =
+    '<option value="">เลือกรุ่นย่อย</option>';
 
-        const years = months / 12;
+  colorSelect.innerHTML =
+    '<option value="">เลือกรุ่นย่อยก่อน</option>';
 
-        totalInterest =
-            finance * 0.05 * years;
+  motorcycles[carName].forEach(function(model, index) {
 
-    }else{
+    const option =
+      document.createElement("option");
 
-        const rate =
-            getRate(
-                bike.rateGroup,
-                months
-            );
+    option.value = index;
+    option.textContent = model.name;
 
-        totalInterest =
-            finance *
-            rate *
-            months;
-    }
+    modelSelect.appendChild(option);
 
-    const total =
-        finance + totalInterest;
+  });
 
-    const payment =
-        Math.round(total / months);
+}
 
-    resultBox.innerHTML = `
-        <h3>${bike.name}</h3>
 
-        <p>รุ่น: ${bike.variant}</p>
+/* =========================
+   เลือกรุ่นย่อย
+========================= */
 
-        <p>เงินสด:
-        ${bike.cash ?
-        bike.cash.toLocaleString() :
-        "-"}</p>
+function selectModel() {
 
-        <p>โปรจัด:
-        ${promo.toLocaleString()}</p>
+  const index =
+    document.getElementById("modelSelect").value;
 
-        <p>ดาวน์:
-        ${down.toLocaleString()}</p>
+  const colorSelect =
+    document.getElementById("colorSelect");
 
-        <p>ยอดจัด:
-        ${finance.toLocaleString()}</p>
+  colorSelect.innerHTML =
+    '<option value="">เลือกสี</option>';
 
-        <p>ดอกเบี้ยรวม:
-        ${Math.round(totalInterest)
-        .toLocaleString()}</p>
+  if (index === "") {
 
-        <h2>
-        ${payment.toLocaleString()}
-        บาท/เดือน
-        </h2>
-    `;
+    selectedModel = null;
+
+    return;
+  }
+
+  selectedModel =
+    motorcycles[selectedCar][index];
+
+  selectedModel.colors.forEach(function(color) {
+
+    const option =
+      document.createElement("option");
+
+    option.value = color;
+    option.textContent = color;
+
+    colorSelect.appendChild(option);
+
+  });
+
+}
+
+
+/* =========================
+   เลือกสี
+========================= */
+
+function selectColor() {
+
+  selectedColor =
+    document.getElementById("colorSelect").value;
+
+}
+
+
+/* =========================
+   เลือกเงินดาวน์
+========================= */
+
+function selectDown(amount, button) {
+
+  selectedDown = amount;
+
+  document
+    .querySelectorAll(".down-option")
+    .forEach(function(button) {
+      button.classList.remove("selected");
+    });
+
+  button.classList.add("selected");
+
+  document.getElementById("customDown").value = "";
+
+}
+
+
+/* =========================
+   เงินดาวน์กำหนดเอง
+========================= */
+
+function customDownChanged() {
+
+  const value =
+    Number(document.getElementById("customDown").value);
+
+  if (value > 0) {
+
+    selectedDown = value;
+
+    document
+      .querySelectorAll(".down-option")
+      .forEach(function(button) {
+        button.classList.remove("selected");
+      });
+
+  }
+
+}
+
+
+/* =========================
+   เลือกจำนวนงวด
+========================= */
+
+function selectMonths(months, button) {
+
+  selectedMonths = months;
+
+  document
+    .querySelectorAll(".month-option")
+    .forEach(function(button) {
+      button.classList.remove("selected");
+    });
+
+  button.classList.add("selected");
+
+}
+
+
+/* =========================
+   หาอัตราดอกเบี้ย
+========================= */
+
+function getRate(rateGroup, months) {
+
+  if (rateGroup === "S") {
+
+    if (months === 36) return 0.0109;
+
+    if (months === 30) return 0.0107;
+
+    return 0.0106;
+
+  }
+
+  if (rateGroup === "M") {
+
+    return 0.0099;
+
+  }
+
+  if (rateGroup === "L") {
+
+    return 0.05;
+
+  }
+
+  return 0;
+
+}
+
+
+/* =========================
+   คำนวณ
+========================= */
+
+function calculate() {
+
+  if (!selectedCar) {
+
+    alert("กรุณาเลือกรถ");
+
+    return;
+
+  }
+
+  if (!selectedModel) {
+
+    alert("กรุณาเลือกรุ่นย่อย");
+
+    return;
+
+  }
+
+  const color =
+    document.getElementById("colorSelect").value;
+
+  if (!color) {
+
+    alert("กรุณาเลือกสี");
+
+    return;
+
+  }
+
+  const customDown =
+    Number(document.getElementById("customDown").value);
+
+  if (customDown > 0) {
+
+    selectedDown = customDown;
+
+  }
+
+  if (selectedDown < 0) {
+
+    alert("เงินดาวน์ไม่ถูกต้อง");
+
+    return;
+
+  }
+
+  if (!selectedModel.promo) {
+
+    alert(
+      "ฐานข้อมูลยังไม่มีราคาโปรของรุ่นนี้"
+    );
+
+    return;
+
+  }
+
+  const price =
+    selectedModel.promo;
+
+  const financed =
+    price - selectedDown;
+
+  if (financed <= 0) {
+
+    alert("เงินดาวน์ต้องน้อยกว่าราคาโปร");
+
+    return;
+
+  }
+
+
+  let interest;
+  let rateText;
+
+
+  /* S / M = ดอกเบี้ยรายเดือน */
+
+  if (
+    selectedModel.rateGroup === "S" ||
+    selectedModel.rateGroup === "M"
+  ) {
+
+    const rate =
+      getRate(
+        selectedModel.rateGroup,
+        selectedMonths
+      );
+
+    interest =
+      financed * rate * selectedMonths;
+
+    rateText =
+      (rate * 100).toFixed(2) +
+      "% / เดือน";
+
+  }
+
+
+  /* L = 5% ต่อปี */
+
+  else if (
+    selectedModel.rateGroup === "L"
+  ) {
+
+    interest =
+      financed *
+      0.05 *
+      (selectedMonths / 12);
+
+    rateText =
+      "5% / ปี";
+
+  }
+
+
+  const total =
+    financed + interest;
+
+  const monthly =
+    total / selectedMonths;
+
+
+  showResult({
+
+    car: selectedCar,
+
+    model: selectedModel.name,
+
+    code: selectedModel.code,
+
+    color: color,
+
+    price: price,
+
+    down: selectedDown,
+
+    financed: financed,
+
+    interest: interest,
+
+    total: total,
+
+    monthly: monthly,
+
+    months: selectedMonths,
+
+    rateText: rateText
+
+  });
+
+}
+
+
+/* =========================
+   แสดงผล
+========================= */
+
+function showResult(data) {
+
+  const result =
+    document.getElementById("result");
+
+  result.style.display = "block";
+
+  result.innerHTML = `
+
+    <h2>ผลคำนวณ</h2>
+
+    <div class="row">
+      <span>รถ</span>
+      <strong>${data.car}</strong>
+    </div>
+
+    <div class="row">
+      <span>รุ่นย่อย</span>
+      <strong>${data.model}</strong>
+    </div>
+
+    <div class="row">
+      <span>สี</span>
+      <strong>${data.color}</strong>
+    </div>
+
+    <div class="row">
+      <span>ราคาโปร</span>
+      <strong>${formatMoney(data.price)} บาท</strong>
+    </div>
+
+    <div class="row">
+      <span>เงินดาวน์</span>
+      <strong>${formatMoney(data.down)} บาท</strong>
+    </div>
+
+    <div class="row">
+      <span>ยอดจัด</span>
+      <strong>${formatMoney(data.financed)} บาท</strong>
+    </div>
+
+    <div class="row">
+      <span>อัตรา</span>
+      <strong>${data.rateText}</strong>
+    </div>
+
+    <div class="row">
+      <span>ดอกเบี้ยรวม</span>
+      <strong>${formatMoney(data.interest)} บาท</strong>
+    </div>
+
+    <div class="row">
+      <span>จำนวนงวด</span>
+      <strong>${data.months} งวด</strong>
+    </div>
+
+    <div class="highlight">
+      ${formatMoney(data.monthly)} บาท / เดือน
+    </div>
+
+    <div class="small">
+      * ค่างวดเป็นการคำนวณเบื้องต้น
+      การอนุมัติและเงื่อนไขจริงขึ้นอยู่กับไฟแนนซ์
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   รีเซ็ต
+========================= */
+
+function resetForm() {
+
+  selectedCar = null;
+  selectedModel = null;
+  selectedColor = "";
+  selectedDown = 0;
+  selectedMonths = 36;
+
+  document
+    .querySelectorAll(".selected")
+    .forEach(function(button) {
+      button.classList.remove("selected");
+    });
+
+  document.getElementById("modelSelect").innerHTML =
+    '<option value="">เลือกรถก่อน</option>';
+
+  document.getElementById("colorSelect").innerHTML =
+    '<option value="">เลือกรุ่นย่อยก่อน</option>';
+
+  document.getElementById("customDown").value = "";
+
+  document.getElementById("result").style.display =
+    "none";
+
 }
